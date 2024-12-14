@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App</title>
+    <style>
+        /* General Body Styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0a1d3f, #1c2531);
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        /* Home Section */
+        #home {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #63a69f;
+            text-shadow: 0 3px 8px rgba(0, 0, 0, 0.6);
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            color: #d1d1d1;
+        }
+
+        .cards {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: #243b53;
+            padding: 25px 50px;
+            border-radius: 20px;
+            font-size: 1.6em;
+            color: #e0e0e0;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7), 0 -8px 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), 0 -10px 25px rgba(255, 255, 255, 0.3);
+            background: #2a4b6d;
+            transition: all 0.3s ease-out;
+        }
+
+        /* Quiz Section */
+        #quiz {
+            display: none;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        #quizTopic {
+            font-size: 2.5em;
+            margin-bottom: 25px;
+            color: #63a69f;
+            text-shadow: 0 3px 8px rgba(0, 0, 0, 0.6);
+        }
+
+        #timerDisplay {
+            font-size: 1.6em;
+            margin-bottom: 25px;
+            color: #f1f1f1;
+            text-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Question Container */
+        #questionContainer {
+            font-size: 1.4em;
+            background: #1e2b3b;
+            padding: 20px;
+            margin: 20px auto;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+            display: inline-block;
+            /* Set to inline-block for inline box layout */
+            max-width: 80%;
+            width: auto;
+            text-align: left;
+        }
+
+        /* Result Section */
+        #result {
+            display: none;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        #result h1 {
+            font-size: 3em;
+            color: #63a69f;
+            text-shadow: 0 3px 8px rgba(0, 0, 0, 0.6);
+        }
+
+        #scoreDisplay {
+            font-size: 1.8em;
+            color: #d1d1d1;
+            margin: 30px 0;
+        }
+
+        /* Buttons */
+        button {
+            background: #3c557b;
+            border: none;
+            border-radius: 12px;
+            padding: 20px 40px;
+            font-size: 1.4em;
+            color: #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin: 20px 0;
+        }
+
+        button:hover {
+            background: #506c8a;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+            transition: all 0.3s ease-out;
+        }
+
+        /* Hidden Elements */
+        .hidden {
+            display: none;
+        }
+
+        /* Options Styling */
+        .option {
+            background: #354c68;
+            padding: 15px 20px;
+            margin: 10px;
+            border-radius: 12px;
+            font-size: 1.3em;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            color: #e0e0e0;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+            display: inline-block;
+            /* Make options inline-block */
+            width: auto;
+            text-align: center;
+        }
+
+        .option:hover {
+            background: #45647b;
+            transform: scale(1.03);
+            transition: all 0.3s ease-out;
+        }
+
+        .option.correct {
+            background: #28a745;
+            border: 3px solid #218838;
+            box-shadow: 0 6px 15px rgba(40, 167, 69, 0.8);
+        }
+
+        .option.incorrect {
+            background: #dc3545;
+            border: 3px solid #c82333;
+            box-shadow: 0 6px 15px rgba(220, 53, 69, 0.8);
+        }
+
+        /* Disabled state for options */
+        .option[style*="pointer-events: none"] {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* Timer Styling */
+        #timerDisplay {
+            font-size: 1.6em;
+            margin-bottom: 20px;
+            color: #ffffff;
+            text-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="home">
+        <h1>Welcome to the Quiz</h1>
+        <p>Select a quiz category to start!</p>
+        <div class="cards">
+            <div class="card" id="htmlCard">HTML Quiz</div>
+            <div class="card" id="cssCard">CSS Quiz</div>
+            <div class="card" id="jsCard">JavaScript Quiz</div>
+        </div>
+    </div>
+
+    <div id="quiz" class="hidden">
+        <h2 id="quizTopic">Quiz Topic</h2>
+        <div id="timerDisplay"></div>
+        <div id="questionContainer"></div>
+        <div id="answersContainer"></div>
+        <button id="nextBtn" class="hidden" onclick="nextQuestion()">Next</button>
+    </div>
+
+    <div id="result" class="hidden">
+        <h1>Quiz Complete!</h1>
+        <p>Your score: <span id="scoreDisplay"></span></p>
+        <button onclick="resetQuiz()">Restart Quiz</button>
+    </div>
+
+    <script>
+        // Global variables
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timer;
+        let timeLeft = 30; // 30 seconds for each question
+        let selectedCategory;
+
+        // Sample Questions for HTML, CSS, and JS
+        var questions = {
+            HTML: [
+                { question: "What does HTML stand for?", options: ["HyperText Markup Language", "HighText Machine Language", "None"], answer: 0 },
+                { question: "Choose the correct HTML element for the largest heading.", options: ["h1", "head", "h6"], answer: 0 },
+                { question: "What does the <head> element do?", options: ["Contains the body content", "Contains meta-information about the document", "Contains the visible content"], answer: 1 },
+                { question: "What does the <a> tag do?", options: ["Defines a hyperlink", "Defines an image", "Defines a paragraph"], answer: 0 },
+                { question: "Which is the correct HTML element to specify a footer?", options: ["footer", "bottom", "end"], answer: 0 },
+                { question: "Which HTML attribute is used to define inline styles?", options: ["class", "style", "id"], answer: 1 },
+                { question: "How can you make a list that lists items with bullets?", options: ["ol", "ul", "dl"], answer: 1 },
+                { question: "Which tag is used to define an image?", options: ["img", "image", "src"], answer: 0 },
+                { question: "Which of the following is a block-level element?", options: ["span", "p", "a"], answer: 1 },
+                { question: "Which HTML tag is used to create a table?", options: ["table", "tr", "td"], answer: 0 }
+            ],
+            CSS: [
+                { question: "What does CSS stand for?", options: ["Cascading Style Sheets", "Creative Style Sheets", "Computer Style Sheets"], answer: 0 },
+                { question: "Which property is used to change background color?", options: ["color", "background-color", "bgcolor"], answer: 1 },
+                { question: "Which property is used to change the font size?", options: ["font-size", "text-size", "font-style"], answer: 0 },
+                { question: "Which property is used to set the spacing between letters?", options: ["letter-spacing", "word-spacing", "line-height"], answer: 0 },
+                { question: "Which property is used to set the margin space?", options: ["spacing", "margin", "padding"], answer: 1 },
+                { question: "Which of the following is used to create a shadow effect in CSS?", options: ["box-shadow", "shadow", "text-shadow"], answer: 0 },
+                { question: "Which of the following CSS selectors selects all <p> elements?", options: ["p", "paragraph", ".p"], answer: 0 },
+                { question: "Which property is used to align text?", options: ["text-align", "align-text", "text-position"], answer: 0 },
+                { question: "Which property is used to make an element's background image?", options: ["background-image", "background-url", "bg-image"], answer: 0 },
+                { question: "How do you create a border in CSS?", options: ["border", "outline", "border-style"], answer: 0 }
+            ],
+            JavaScript: [
+                { question: "Which company developed JavaScript?", options: ["Microsoft", "Netscape", "Google"], answer: 1 },
+                { question: "Which symbol is used for comments in JavaScript?", options: ["//", "#", "/* */"], answer: 0 },
+                { question: "What will this code return: Boolean(10 > 9)", options: ["True", "False", "Undefined"], answer: 0 },
+                { question: "Which method is used to add an element to an array?", options: ["push()", "pop()", "shift()"], answer: 0 },
+                { question: "Which event occurs when the user clicks on an HTML element?", options: ["onmouseover", "onclick", "onchange"], answer: 1 },
+                { question: "What does the 'this' keyword refer to?", options: ["The current object", "The current function", "The parent object"], answer: 0 },
+                { question: "Which of the following is used to create a function?", options: ["function myFunc()", "myFunc()", "create function"], answer: 0 },
+                { question: "How do you declare a variable in JavaScript?", options: ["var", "let", "const"], answer: 0 },
+                { question: "What is NaN in JavaScript?", options: ["Not a Number", "Null a Number", "Not Applicable Number"], answer: 0 },
+                { question: "How do you write a JavaScript array?", options: ["[]", "{}", "()", "||"], answer: 0 }
+            ]
+        };
+
+        // Event listener for selecting a quiz category
+        document.querySelector("#htmlCard").addEventListener("click", () => startQuiz('HTML'));
+        document.querySelector("#cssCard").addEventListener("click", () => startQuiz('CSS'));
+        document.querySelector("#jsCard").addEventListener("click", () => startQuiz('JavaScript'));
+
+        // Start the quiz
+        function startQuiz(category) {
+            selectedCategory = category;
+            document.getElementById('home').style.display = 'none';
+            document.getElementById('quiz').style.display = 'block';
+            document.getElementById('quizTopic').innerText = `${category} Quiz`;
+            loadQuestion();
+        }
+
+        // Load the question
+        function loadQuestion() {
+            const question = questions[selectedCategory][currentQuestionIndex];
+            document.getElementById('questionContainer').innerText = question.question;
+            let optionsHTML = '';
+            question.options.forEach((option, index) => {
+                optionsHTML += `
+                    <div class="option" onclick="checkAnswer(${index})">${option}</div>
+                `;
+            });
+            document.getElementById('answersContainer').innerHTML = optionsHTML;
+            document.getElementById('nextBtn').classList.add('hidden');
+            startTimer();
+        }
+
+        // Timer for each question
+        function startTimer() {
+            timeLeft = 30;
+            document.getElementById('timerDisplay').innerText = `Time: ${timeLeft}s`;
+            clearInterval(timer);
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timerDisplay').innerText = `Time: ${timeLeft}s`;
+                if (timeLeft === 0) {
+                    clearInterval(timer);
+                    nextQuestion();
+                }
+            }, 1000);
+        }
+
+        // Check if answer is correct
+        function checkAnswer(selectedIndex) {
+            const question = questions[selectedCategory][currentQuestionIndex];
+            const options = document.querySelectorAll('.option');
+            if (selectedIndex === question.answer) {
+                score++;
+                options[selectedIndex].style.backgroundColor = 'green';
+            } else {
+                options[selectedIndex].style.backgroundColor = 'red';
+            }
+            // Disable options after an answer is selected
+            options.forEach(option => option.style.pointerEvents = 'none');
+            document.getElementById('nextBtn').classList.remove('hidden');
+        }
+
+        // Go to the next question
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions[selectedCategory].length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        // Show quiz result
+        function showResult() {
+            document.getElementById('quiz').style.display = 'none';
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('scoreDisplay').innerText = `${score} / ${questions[selectedCategory].length}`;
+        }
+
+        // Restart the quiz
+        function resetQuiz() {
+            score = 0;
+            currentQuestionIndex = 0;
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('home').style.display = 'block';
+        }
+    </script>
+</body>
+
+</html>

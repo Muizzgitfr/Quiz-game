@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        /* Importing Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@300;400&display=swap');
+
+        /* General Body Styling */
+        body {
+            font-family: 'Montserrat', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #0a1f33, #1c2d49);
+            /* Black and Blue Gradient */
+            color: #ffffff;
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        /* Container Styling */
+        .container {
+            background: linear-gradient(145deg, #2a3c55, #1e2a39);
+            /* Darker blue gradient */
+            color: #ffffff;
+            border-radius: 16px;
+            padding: 35px 30px;
+            width: 350px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 -5px 15px rgba(255, 255, 255, 0.03);
+            animation: slideUp 1.2s ease-out forwards;
+        }
+
+        /* Headings */
+        h2 {
+            font-size: 2em;
+            margin-bottom: 25px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 700;
+            color: #2196F3;
+            /* Blue color for heading */
+        }
+
+        /* Input Fields */
+        input {
+            display: block;
+            width: calc(100% - 24px);
+            padding: 15px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Roboto', sans-serif;
+            background: #222222;
+            /* Dark background */
+            color: #ffffff;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+            outline: none;
+            transition: all 0.3s ease-in-out;
+        }
+
+        input::placeholder {
+            color: #888888;
+        }
+
+        input:focus {
+            background: #333333;
+            /* Slightly lighter dark background on focus */
+            box-shadow: 0 0 10px #2196F3;
+            /* Blue glow */
+        }
+
+        /* Buttons */
+        button {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            /* Blue gradient */
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s ease-in-out;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #1976D2, #2196F3);
+            /* Swap gradient on hover */
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(33, 150, 243, 0.8);
+        }
+
+        /* Switch Text */
+        .switch {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 0.9em;
+            font-family: 'Roboto', sans-serif;
+            color: #aaaaaa;
+        }
+
+        .switch a {
+            color: #2196F3;
+            /* Blue color for links */
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .switch a:hover {
+            color: #1976D2;
+            /* Darker blue on hover */
+            text-shadow: 0 2px 5px rgba(33, 150, 243, 0.6);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div id="login-form">
+            <h2>Login</h2>
+            <input type="text" id="login-username" placeholder="Username" required>
+            <input type="password" id="login-password" placeholder="Password" required>
+            <button onclick="login()">Login</button>
+            <p class="switch">Don't have an account? <a href="./index.html">Sign Up</a></p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function login() {
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            const user = JSON.parse(localStorage.getItem(username));
+
+            if (!user) {
+                Swal.fire({
+                    title: 'User Not Found!',
+                    text: 'Please check your username and try again.',
+                    icon: 'error',
+                    confirmButtonText: 'Try Again'
+                });
+            } else if (user.password !== password) {
+                Swal.fire({
+                    title: 'Incorrect Password!',
+                    text: 'The password you entered is incorrect.',
+                    icon: 'error',
+                    confirmButtonText: 'Try Again'
+                });
+            } else {
+                Swal.fire({
+                    title: 'Login Successful!',
+                    text: 'Welcome back!',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = './quiz.html';
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>
